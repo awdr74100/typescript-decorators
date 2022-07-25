@@ -1,0 +1,23 @@
+{
+  "name": "typescript-decorators",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awdr74100/typescript-decorators.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awdr74100/typescript-decorators/issues"
+  },
+  "homepage": "https://github.com/awdr74100/typescript-decorators#readme",
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
+}
