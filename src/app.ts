@@ -1,4 +1,5 @@
 function Logger(logString: string) {
+  console.log('LOGGER FACTORY');
   return function (constructor: Function) {
     console.log(logString);
     console.log(constructor);
@@ -6,7 +7,9 @@ function Logger(logString: string) {
 }
 
 function WithTemplate(selector: string, template: string) {
+  console.log('TEMPLATE FACTORY');
   return function (constructor: any) {
+    console.log('Rendering template');
     const { name } = new constructor();
 
     const el = document.querySelector(selector);
@@ -17,6 +20,7 @@ function WithTemplate(selector: string, template: string) {
 }
 
 // @Logger('LOGGING - PERSON')
+@Logger('LOGGING')
 @WithTemplate('#app', `<h1>{{ name }}'s Blog</h1>`)
 class Person {
   name = 'Max';
