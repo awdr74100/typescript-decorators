@@ -36,19 +36,42 @@ console.log(person);
 
 // ---
 
-function Log(target: any, propertyName: string | Symbol) {
-  console.log('Property decorator!');
-  console.log(target, propertyName);
+function logPropertyDecorator(target: any, propertyKey: string | symbol) {
+  console.log('Property Decorator!', target, propertyKey);
+}
+
+function logAccessorDecorator(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor,
+) {
+  console.log('Accessor Decorator!', target, propertyKey, descriptor);
+}
+
+function logMethodDecorator(
+  target: any,
+  propertyKey: string | symbol,
+  descriptor: PropertyDescriptor,
+) {
+  console.log('Method Decorator!', target, propertyKey, descriptor);
+}
+
+function logParameterDecorator(
+  target: any,
+  propertyKey: string | symbol,
+  parameterIndex: number,
+) {
+  console.log('Parameter Decorator!', target, propertyKey, parameterIndex);
 }
 
 class Product {
-  @Log
-  public title: string;
+  @logPropertyDecorator
+  title: string;
   private _price: number;
 
+  @logAccessorDecorator
   set price(val: number) {
     if (val <= 0) throw new Error('Invalid price - should be positive!');
-
     this._price = val;
   }
 
@@ -57,7 +80,8 @@ class Product {
     this._price = price;
   }
 
-  getPriceWithTax(tax: number) {
+  @logMethodDecorator
+  getPriceWithTax(@logParameterDecorator tax: number) {
     return this._price * (1 + tax);
   }
 }
