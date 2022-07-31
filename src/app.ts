@@ -91,3 +91,47 @@ class Product {
     return this._price * (1 + tax);
   }
 }
+
+// Other Decorator Return Types
+
+function enumerable(value: boolean) {
+  return function (_: any, __: string, descriptor: PropertyDescriptor) {
+    descriptor.enumerable = value;
+  };
+}
+
+function configurable(value: boolean) {
+  return function (_: any, __: string, descriptor: PropertyDescriptor) {
+    descriptor.configurable = value;
+  };
+}
+
+class Car {
+  title: string;
+  _price: number;
+
+  @configurable(false)
+  set price(val: number) {
+    if (val <= 0) throw new Error('...');
+    this._price = val;
+  }
+
+  constructor(title: string, price: number) {
+    this.title = title;
+    this._price = price;
+  }
+
+  @enumerable(true)
+  getPriceWithTax(tax: number) {
+    return this._price * (1 + tax);
+  }
+}
+
+console.log(
+  'Car descriptor price',
+  Object.getOwnPropertyDescriptor(Car.prototype, 'price'),
+);
+console.log(
+  'Car descriptor getPriceWithTax',
+  Object.getOwnPropertyDescriptor(Car.prototype, 'getPriceWithTax'),
+);
