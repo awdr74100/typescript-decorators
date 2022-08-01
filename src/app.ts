@@ -42,11 +42,11 @@ console.log(person);
 
 // ---
 
-function logPropertyDecorator(target: any, propertyKey: string | symbol) {
+function LogPropertyDecorator(target: any, propertyKey: string | symbol) {
   console.log('Property Decorator!', target, propertyKey);
 }
 
-function logAccessorDecorator(
+function LogAccessorDecorator(
   target: any,
   propertyKey: string,
   descriptor: PropertyDescriptor,
@@ -54,7 +54,7 @@ function logAccessorDecorator(
   console.log('Accessor Decorator!', target, propertyKey, descriptor);
 }
 
-function logMethodDecorator(
+function LogMethodDecorator(
   target: any,
   propertyKey: string | symbol,
   descriptor: PropertyDescriptor,
@@ -62,7 +62,7 @@ function logMethodDecorator(
   console.log('Method Decorator!', target, propertyKey, descriptor);
 }
 
-function logParameterDecorator(
+function LogParameterDecorator(
   target: any,
   propertyKey: string | symbol,
   parameterIndex: number,
@@ -71,11 +71,11 @@ function logParameterDecorator(
 }
 
 class Product {
-  @logPropertyDecorator
+  @LogPropertyDecorator
   title: string;
   private _price: number;
 
-  @logAccessorDecorator
+  @LogAccessorDecorator
   set price(val: number) {
     if (val <= 0) throw new Error('Invalid price - should be positive!');
     this._price = val;
@@ -86,8 +86,8 @@ class Product {
     this._price = price;
   }
 
-  @logMethodDecorator
-  getPriceWithTax(@logParameterDecorator tax: number) {
+  @LogMethodDecorator
+  getPriceWithTax(@LogParameterDecorator tax: number) {
     return this._price * (1 + tax);
   }
 }
@@ -97,13 +97,13 @@ const p2 = new Product('Book 2', 29);
 
 // Other Decorator Return Types
 
-function enumerable(value: boolean) {
+function Enumerable(value: boolean) {
   return function (_: any, __: string, descriptor: PropertyDescriptor) {
     descriptor.enumerable = value;
   };
 }
 
-function configurable(value: boolean) {
+function Configurable(value: boolean) {
   return function (_: any, __: string, ___: PropertyDescriptor) {
     return { configurable: value };
   };
@@ -113,7 +113,7 @@ class Car {
   title: string;
   _price: number;
 
-  @configurable(false)
+  @Configurable(false)
   set price(val: number) {
     if (val <= 0) throw new Error('...');
     this._price = val;
@@ -124,7 +124,7 @@ class Car {
     this._price = price;
   }
 
-  @enumerable(true)
+  @Enumerable(true)
   getPriceWithTax(tax: number) {
     return this._price * (1 + tax);
   }
