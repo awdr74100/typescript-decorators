@@ -101,8 +101,8 @@ function enumerable(value: boolean) {
 }
 
 function configurable(value: boolean) {
-  return function (_: any, __: string, descriptor: PropertyDescriptor) {
-    descriptor.configurable = value;
+  return function (_: any, __: string, ___: PropertyDescriptor) {
+    return { configurable: value };
   };
 }
 
