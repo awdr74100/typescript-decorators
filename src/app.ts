@@ -95,46 +95,64 @@ class Product {
 const p1 = new Product('Book 1', 19);
 const p2 = new Product('Book 2', 29);
 
-// Other Decorator Return Types
-
-function Enumerable(value: boolean) {
-  return function (_: any, __: string, descriptor: PropertyDescriptor) {
-    descriptor.enumerable = value;
-  };
-}
+// Other Decorator Return Types (include Autobind Decorator example)
 
 function Configurable(value: boolean) {
   return function (_: any, __: string, ___: PropertyDescriptor) {
-    return { configurable: value };
+    return {
+      configurable: value,
+    };
   };
 }
 
-class Car {
-  title: string;
-  _price: number;
+function Autobind(_: any, __: string, descriptor: PropertyDescriptor) {
+  return {
+    configurable: true,
+    enumerable: false,
+    get() {
+      return descriptor.value.bind(this);
+    },
+  };
+}
+
+class BugReport {
+  constructor(
+    public title: string,
+    public environment: { browser: string; os: string },
+    private _createdAt = Date.now(),
+    private _updatedAt = Date.now(),
+  ) {}
+
+  get createdAt() {
+    return this._createdAt;
+  }
 
   @Configurable(false)
-  set price(val: number) {
-    if (val <= 0) throw new Error('...');
-    this._price = val;
+  get updatedAt() {
+    return this._updatedAt;
   }
 
-  constructor(title: string, price: number) {
-    this.title = title;
-    this._price = price;
+  set updatedAt(timestamp: number) {
+    if (timestamp <= this.updatedAt) throw new Error('invalid value!');
+    this._updatedAt = timestamp;
   }
 
-  @Enumerable(true)
-  getPriceWithTax(tax: number) {
-    return this._price * (1 + tax);
+  @Autobind
+  print() {
+    console.log(this, this.title);
   }
 }
 
-console.log(
-  'Car descriptor price',
-  Object.getOwnPropertyDescriptor(Car.prototype, 'price'),
-);
-console.log(
-  'Car descriptor getPriceWithTax',
-  Object.getOwnPropertyDescriptor(Car.prototype, 'getPriceWithTax'),
-);
+const bugReport = new BugReport('website not responding', {
+  browser: 'chrome',
+  os: 'macos',
+});
+
+// @ts-ignore
+console.log(Object.getOwnPropertyDescriptors(BugReport.prototype));
+
+bugReport.print();
+
+console.log('--- Following is from button ---');
+
+document.querySelector('.btn')!.addEventListener('click', bugReport.print);
