@@ -110,7 +110,7 @@ function Autobind(_: any, __: string, descriptor: PropertyDescriptor) {
     configurable: true,
     enumerable: false,
     get() {
-      return descriptor.value.bind(this);
+      return descriptor.value.bind(this); // this 將指向 bugReport (與一般方法指向邏輯相同)
     },
   };
 }
@@ -154,5 +154,8 @@ console.log(Object.getOwnPropertyDescriptors(BugReport.prototype));
 bugReport.print();
 
 console.log('--- Following is from button ---');
+
+// const btn = document.querySelector('.btn') as HTMLButtonElement;
+// btn.addEventListener('click', bugReport.print.bind(bugReport));
 
 document.querySelector('.btn')!.addEventListener('click', bugReport.print);
