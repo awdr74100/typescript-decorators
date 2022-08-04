@@ -1,5 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "ignorePaths": ["./tsconfig.json", "./.prettierrc.json"],
-  "words": ["Autobind"]
+  "words": ["Autobind", "validatableProperty"]
 }

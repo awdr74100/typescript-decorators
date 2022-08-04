@@ -159,3 +159,102 @@ console.log('--- Following is from button ---');
 // btn.addEventListener('click', bugReport.print.bind(bugReport));
 
 document.querySelector('.btn')!.addEventListener('click', bugReport.print);
+
+// Validation with Decorators (can be wrapped as a library)
+
+interface RegisteredValidators {
+  [constructorName: string]: {
+    [validatablePropertyName: string]: (
+      | 'IsPositiveNumber'
+      | 'IsAlphanumericString'
+    )[];
+  };
+}
+
+const registeredValidators: RegisteredValidators = {};
+
+function IsPositiveNumber(target: any, propertyKey: string) {
+  const constructorName = target.constructor.name;
+
+  if (registeredValidators[constructorName]) {
+    registeredValidators[constructorName][propertyKey] = [
+      ...(registeredValidators[constructorName][propertyKey] ?? []),
+      'IsPositiveNumber',
+    ];
+    return;
+  }
+
+  registeredValidators[constructorName] = {
+    [propertyKey]: ['IsPositiveNumber'],
+  };
+}
+
+function IsAlphanumericString(target: any, propertyKey: string) {
+  const constructorName = target.constructor.name;
+
+  if (registeredValidators[constructorName]) {
+    registeredValidators[constructorName][propertyKey] = [
+      ...(registeredValidators[constructorName][propertyKey] ?? []),
+      'IsAlphanumericString',
+    ];
+    return;
+  }
+
+  registeredValidators[constructorName] = {
+    [propertyKey]: ['IsAlphanumericString'],
+  };
+}
+
+function validate(instance: any) {
+  const instanceValidators = registeredValidators[instance.constructor.name];
+
+  if (!instanceValidators) return true;
+
+  return Object.keys(instanceValidators).every((validatablePropertyName) => {
+    return instanceValidators[validatablePropertyName].every(
+      (validatorName) => {
+        if (validatorName === 'IsPositiveNumber') {
+          return instance[validatablePropertyName] > 0;
+        }
+
+        if (validatorName === 'IsAlphanumericString') {
+          return /^[A-Za-z0-9]+$/i.test(instance[validatablePropertyName]);
+        }
+
+        return true;
+      },
+    );
+  });
+}
+
+class Course {
+  @IsAlphanumericString
+  title: string;
+  @IsPositiveNumber
+  price: number;
+
+  constructor(title: string, price: number) {
+    this.title = title;
+    this.price = price;
+  }
+}
+
+const formEl = document.querySelector('.form') as HTMLFormElement;
+
+formEl.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const titleEl = document.querySelector('.form__title') as HTMLInputElement;
+  const priceEl = document.querySelector('.form__price') as HTMLInputElement;
+
+  const [title, price] = [titleEl.value, parseInt(priceEl.value, 10)];
+
+  const course = new Course(title, price);
+
+  if (!validate(course)) {
+    console.error('Invalid input, please try again!');
+    return;
+  }
+
+  console.log(course);
+});
